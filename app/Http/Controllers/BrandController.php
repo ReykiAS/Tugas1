@@ -33,15 +33,10 @@ class BrandController extends Controller
 
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('photos');
-
-            $image = Image::create([
-                'url' => $photoPath,
-                'imageable_id' =>  $brand->id,
-                'imageable_type' => Brand::class,
-            ]);
+            $brand->addImage($photoPath);
         }
 
-        return response()->json(['message' => 'brand created successfully'], 201);
+        return response()->json(['message' => 'Brand created successfully'], 201);
     }
 
     /**
@@ -49,47 +44,29 @@ class BrandController extends Controller
      */
     public function show(string $id)
     {
-        $brand = Brand::findOrFail($id);
+        $brand = Brand::with('image')->find($id);
 
-        $photo =  $brand->images()->first();
-
-        $responseData = [
-            'brand' =>  $brand,
-            'photo' => $photo ?? null,
-        ];
-
-        return response()->json($responseData);
-
-
+        if ($brand) {
+            return BrandResource::make($brand)->withDetail();
+        } else {
+            return response()->json(['message' => 'Brand  tidak ditemukan'], 404);
+        }
     }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(RequestsBrandUpdateRequest $request, $id): JsonResponse
     {
         $validated = $request->validated();
-        $brand = brand::find($id);
+        $brand = Brand::find($id);
+
         if (!$brand) {
-            return response()->json(['message' => 'brand tidak ditemukan'], 404);
+            return response()->json(['message' => 'Brand  tidak ditemukan'], 404);
         }
-
         $brand->update($validated);
+        $brand->updateImage($request);
 
-        if ($request->hasFile('photo')) {
-            if ($brand->image) {
-                Storage::delete($brand->image->url);
-                $brand->image->delete();
-            }
-
-            $photoPath = $request->file('photo')->store('photos');
-            $brand->image()->create([
-                'url' => $photoPath,
-                'imageable_id' => $brand->id,
-            ]);
-        }
-
-        return response()->json(['message' => 'brand berhasil diupdate', 'brand' => $brand]);
+    return response()->json(['message' => 'Brand  berhasil diupdate', 'brand' => $brand]);
     }
 
     /**
@@ -101,6 +78,6 @@ class BrandController extends Controller
 
         $brand->delete();
 
-        return response()->json(['message' => 'brand deleted successfully']);
+        return response()->json(['message' => 'Brand  deleted successfully']);
     }
 }

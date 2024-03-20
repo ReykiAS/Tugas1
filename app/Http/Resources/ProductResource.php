@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BrandResource extends JsonResource
+class ProductResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -13,23 +14,31 @@ class BrandResource extends JsonResource
      * @return array<string, mixed>
      */
     public function toArray($request)
-    {
-        $data = [
-            'id' => $this->id,
-            'name' => $this->Name,
-        ];
+{
+    $data = [
+        'id' => $this->id,
+        'Name' => $this->name,
+        'Price' => $this->price,
+        'Brand Name' => $this->brand->Name,
+        'Category Name' => $this->category->Name,
+        'Shop Name' => $this->user->name,
+    ];
 
-        // Pastikan isDetail disetel ke true dan relasi images dimuat
-        if ($this->isDetail) {
-            if ($this->image) {
-                $data['photo'] = $this->image->url;
-            } else {
-                $data['photo'] = null;
-            }
-        }
-
-        return $data;
+    // Adding conditional for photo
+    if ($this->image) {
+        $data['photo'] = $this->image->url;
+    } else {
+        $data['photo'] = null;
     }
+
+    // Adding additional details if isDetail is set to true
+    if ($this->isDetail) {
+        $data['Description'] = $this->description;
+        $data['Stock'] = $this->stock;
+    }
+
+    return $data;
+}
 
     public function withDetail()
     {

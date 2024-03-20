@@ -34,12 +34,7 @@ class CategoryController extends Controller
 
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('photos');
-
-            $image = Image::create([
-                'url' => $photoPath,
-                'imageable_id' =>  $category->id,
-                'imageable_type' => Category::class,
-            ]);
+            $category->addImage($photoPath);
         }
 
         return response()->json(['message' => 'category created successfully'], 201);
@@ -50,20 +45,16 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::with('image')->find($id);
 
-        $photo =  $category->images()->first();
-
-        $responseData = [
-            'category' =>  $category,
-            'photo' => $photo ?? null,
-        ];
-
-        return response()->json($responseData);
+        if ($category) {
+            return CategoryResource::make($category)->withDetail();
+        } else {
+            return response()->json(['message' => 'Category tidak ditemukan'], 404);
+        }
 
 
     }
-
     /**
      * Update the specified resource in storage.
      */
@@ -71,24 +62,13 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
         $category = Category::find($id);
+
         if (!$category) {
-            return response()->json(['message' => 'Category tidak ditemukan'], 404);
+            return response()->json(['message' => 'category tidak ditemukan'], 404);
         }
 
-        $category->create($validated);
-
-        if ($request->hasFile('photo')) {
-            if ($category->image) {
-                Storage::delete($category->image->url);
-                $category->image->delete();
-            }
-
-            $photoPath = $request->file('photo')->store('photos');
-            $category->image()->create([
-                'url' => $photoPath,
-                'imageable_id' => $category->id,
-            ]);
-        }
+        $category->update($validated);
+        $category->updateImage($request);
 
         return response()->json(['message' => 'Category berhasil diupdate', 'category' => $category]);
     }

@@ -27,6 +27,7 @@ class CategoryUpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048',
         ];
     }
 
