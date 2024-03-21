@@ -1,4 +1,5 @@
 <?php
+use App\Http\Middleware\ApiProductMiddleware;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,12 +24,24 @@ use App\Models\Product;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('v1/productss', [ProductController::class, 'index']);
 Route::post('v1/login', [UserController::class, 'login'])->name('login');
 Route::apiResource('v1/user', UserController::class);
-Route::apiResource('v1/categories', CategoryController::class);
-Route::apiResource('v1/brand', BrandController::class);
-Route::apiResource('v1/product', ProductController::class);
-// // Route::put('/v1/categories/update/{id}', function(Request $request) {
-// //     dd($request->all());
-// });
+
+//auth permasing masing user
+Route::middleware('auth:sanctum',ApiProductMiddleware::class)->group(function() {
+    Route::get('v1/products', [ProductController::class, 'index']);
+    Route::get('v1/products/{product}', [ProductController::class, 'show']);
+    Route::post('v1/products', [ProductController::class, 'store']);
+    Route::put('v1/products/{product}', [ProductController::class, 'update']);
+    Route::delete('v1/products/{product}', [ProductController::class, 'destroy']);
+});
+Route::middleware('auth:sanctum')->group(function() {
+    Route::apiResource('v1/categories', CategoryController::class);
+    Route::apiResource('v1/brand', BrandController::class);
+});
+
+
+
 
