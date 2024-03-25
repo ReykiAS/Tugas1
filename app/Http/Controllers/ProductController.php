@@ -95,11 +95,7 @@ class ProductController extends Controller
         $user = Auth::user();
         $product = Product::with('image')->find($id);
         if ($product) {
-            if ($user && $product->user_id == $user->id) {
-                return ProductResource::make($product)->withDetail();
-            } else {
-                return response()->json(['message' => 'Anda tidak memiliki akses ke produk ini.'], 403);
-            }
+            return ProductResource::make($product)->withDetail();
         } else {
             return response()->json(['message' => 'Produk tidak ditemukan'], 404);
         }
@@ -129,9 +125,6 @@ class ProductController extends Controller
     public function destroy($id)
     {
     $product = Product::findOrFail($id);
-    if (auth()->user()->id != $product->user_id) {
-        return response()->json(['message' => 'Anda tidak memiliki izin untuk memperbarui produk ini.'], 403);
-    }
     $product->delete();
     return response()->json(['message' => 'Product deleted successfully']);
     }
@@ -147,10 +140,6 @@ class ProductController extends Controller
     public function restore($id)
     {
         $product = Product::withTrashed()->findOrFail($id);
-
-        if (auth()->user()->id != $product->user_id) {
-            return response()->json(['message' => 'Anda tidak memiliki izin untuk memulihkan produk ini.'], 403);
-        }
 
         $product->restore();
 
