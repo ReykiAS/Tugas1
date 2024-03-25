@@ -27,16 +27,10 @@ class ProductController extends Controller
     }
 
     // check if the user is searching for a product
-    if ($request->has('search') && $request->search !== null) {
+    if ($request->has('search')) {
         $searchTerm = '%' . $request->search . '%';
         $productsQuery->where(function ($query) use ($searchTerm) {
-            $query->where('name', 'like', $searchTerm)
-                ->orWhereHas('category', function ($query) use ($searchTerm) {
-                    $query->where('Name', 'like', $searchTerm);
-                })
-                ->orWhereHas('brand', function ($query) use ($searchTerm) {
-                    $query->where('Name', 'like', $searchTerm);
-                });
+            $query->where('name', 'LIKE', $searchTerm);
         });
     }
 
@@ -45,6 +39,22 @@ class ProductController extends Controller
         $minPrice = $request->min_price;
         $maxPrice = $request->max_price;
         $productsQuery->whereBetween('price', [$minPrice, $maxPrice]);
+    }
+
+    // check if the user is filtering by brand name
+    if ($request->has('brand_name')) {
+        $brandName = $request->brand_name;
+        $productsQuery->whereHas('brand', function ($query) use ($brandName) {
+            $query->where('Name', 'like', '%' . $brandName . '%');
+        });
+    }
+
+    // check if the user is filtering by category name
+    if ($request->has('category_name')) {
+        $categoryName = $request->category_name;
+        $productsQuery->whereHas('category', function ($query) use ($categoryName) {
+            $query->where('Name', 'like', '%' . $categoryName . '%');
+        });
     }
 
     // check if the user is sorting the products
@@ -61,6 +71,7 @@ class ProductController extends Controller
     // Return a success response
     return ProductResource::collection($products);
 }
+
     /**
      * Store a newly created resource in storage.
      */
