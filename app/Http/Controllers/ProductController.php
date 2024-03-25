@@ -18,55 +18,49 @@ class ProductController extends Controller
      */
     public function index(Request $request)
 {
-    $user = auth()->user();
-    $minPrice = $request->input('min_price');
-    $maxPrice = $request->input('max_price');
-    $name = $request->input('name');
-    $sortBy = $request->input('sortBy', 'id');
-    $sortOrder = $request->input('sortOrder', 'asc');
+    $user = auth('sanctum')->user();
+    $productsQuery = Product::with('images', 'category', 'brand', 'user');
 
-    $productsQuery = Product::with(['category', 'brand']);
-
+    // check if the user is authenticated
     if ($user) {
         $productsQuery->where('user_id', $user->id);
     }
 
-    if ($name) {
-        $productsQuery->where(function ($query) use ($name) {
-            $query->where('name', 'LIKE', '%' . $name . '%')
-                ->orWhereHas('category', function ($query) use ($name) {
-                    $query->where('Name', 'LIKE', '%' . $name . '%');
+    // check if the user is searching for a product
+    if ($request->has('search') && $request->search !== null) {
+        $searchTerm = '%' . $request->search . '%';
+        $productsQuery->where(function ($query) use ($searchTerm) {
+            $query->where('name', 'like', $searchTerm)
+                ->orWhereHas('category', function ($query) use ($searchTerm) {
+                    $query->where('Name', 'like', $searchTerm);
                 })
-                ->orWhereHas('brand', function ($query) use ($name) {
-                    $query->where('Name', 'LIKE', '%' . $name . '%');
+                ->orWhereHas('brand', function ($query) use ($searchTerm) {
+                    $query->where('Name', 'like', $searchTerm);
                 });
         });
     }
 
-    if ($minPrice !== null && $maxPrice !== null) {
+    // check if the user is filtering by price range
+    if ($request->has('min_price') && $request->has('max_price')) {
+        $minPrice = $request->min_price;
+        $maxPrice = $request->max_price;
         $productsQuery->whereBetween('price', [$minPrice, $maxPrice]);
     }
 
-    // Lakukan sorting menggunakan sortBy
-    $products = $productsQuery->get()->sortBy(function ($product) use ($sortBy) {
-        switch ($sortBy) {
-            case 'category_name':
-                return optional($product->category)->Name;
-            case 'brand_name':
-                return optional($product->brand)->Name;
-            default:
-                return $product->{$sortBy};
-        }
-    }, SORT_REGULAR, $sortOrder === 'desc');
+    // check if the user is sorting the products
+    if ($request->has('sort_by')) {
+        $sortBy = $request->sort_by;
+        $sortOrder = $request->input('sort_order', 'asc');
+        $productsQuery->orderBy($sortBy, $sortOrder);
+    }
 
+    // Paginate the products
+    $perPage = $request->input('per_page', 10);
+    $products = $productsQuery->paginate($perPage);
+
+    // Return a success response
     return ProductResource::collection($products);
 }
-
-
-
-
-
-
     /**
      * Store a newly created resource in storage.
      */
@@ -122,12 +116,33 @@ class ProductController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($id)
-{
+    {
     $product = Product::findOrFail($id);
     if (auth()->user()->id != $product->user_id) {
         return response()->json(['message' => 'Anda tidak memiliki izin untuk memperbarui produk ini.'], 403);
     }
     $product->delete();
     return response()->json(['message' => 'Product deleted successfully']);
+    }
+
+    public function showDeleted(Request $request)
+    {
+        $productsQuery = Product::with(['category', 'brand'])->onlyTrashed();
+        $perPage = 5;
+        $products = $productsQuery->paginate($perPage);
+
+        return ProductResource::collection($products);
+    }
+    public function restore($id)
+    {
+        $product = Product::withTrashed()->findOrFail($id);
+
+        if (auth()->user()->id != $product->user_id) {
+            return response()->json(['message' => 'Anda tidak memiliki izin untuk memulihkan produk ini.'], 403);
+        }
+
+        $product->restore();
+
+        return response()->json(['message' => 'Produk berhasil dipulihkan.']);
 }
 }

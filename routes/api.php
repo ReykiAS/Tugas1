@@ -24,22 +24,25 @@ use App\Models\Product;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-Route::get('v1/productss', [ProductController::class, 'index']);
+Route::get('v1/products', [ProductController::class, 'index']);
 Route::post('v1/login', [UserController::class, 'login'])->name('login');
 Route::apiResource('v1/user', UserController::class);
 
-//auth permasing masing user
-Route::middleware('auth:sanctum',ApiProductMiddleware::class)->group(function() {
-    Route::get('v1/products', [ProductController::class, 'index']);
-    Route::get('v1/products/{product}', [ProductController::class, 'show']);
-    Route::post('v1/products', [ProductController::class, 'store']);
-    Route::put('v1/products/{product}', [ProductController::class, 'update']);
-    Route::delete('v1/products/{product}', [ProductController::class, 'destroy']);
+
+Route::middleware('auth:sanctum', ApiProductMiddleware::class)->prefix('v1')->group(function () {
+    Route::get('products/deleted', [ProductController::class, 'showDeleted'])->name('products.deleted.index');
+    Route::put('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+    Route::apiResource('products', ProductController::class)->except(['index']);
 });
-Route::middleware('auth:sanctum')->group(function() {
-    Route::apiResource('v1/categories', CategoryController::class);
-    Route::apiResource('v1/brand', BrandController::class);
+
+Route::middleware('auth:sanctum')->prefix('v1')->group(function() {
+    Route::get('categories/deleted', [CategoryController::class, 'showDeleted']);
+    Route::put('categories/{id}/restore', [CategoryController::class, 'restore']);
+    Route::get('brands/deleted', [BrandController::class, 'showDeleted']);
+    Route::put('brand/{id}/restore', [BrandController::class, 'restore']);
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('brands', BrandController::class);
+    Route::post('/logout', [UserController::class, 'logout']);
 });
 
 

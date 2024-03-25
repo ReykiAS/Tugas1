@@ -53,7 +53,6 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Category tidak ditemukan'], 404);
         }
 
-
     }
     /**
      * Update the specified resource in storage.
@@ -84,4 +83,16 @@ class CategoryController extends Controller
 
         return response()->json(['message' => 'Category deleted successfully']);
     }
+    public function showDeleted()
+    {
+        $softDeletedCategory = Category::onlyTrashed()->get();
+        return response()->json(['data' => CategoryResource::collection($softDeletedCategory)]);
+    }
+    public function restore($id)
+    {
+        $category = Category::withTrashed()->findOrFail($id);
+        $category->restore();
+
+        return response()->json(['message' => 'Produk berhasil dipulihkan.']);
+}
 }
