@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Image;
@@ -77,7 +78,10 @@ class ProductController extends Controller
      */
     public function store(ProductStoreRequest $request)
     {
-        $validated = $request->validated();
+    $validated = $request->validated();
+
+    try {
+
         $product = Product::create($validated);
 
         if ($request->hasFile('photo')) {
@@ -85,8 +89,20 @@ class ProductController extends Controller
             $product->addImage($photoPath);
         }
 
-        return response()->json(['message' => 'Produk created successfully'], 201);
+        if ($request->has('variants') && is_array($request->variants)) {
+            foreach ($request->variants as $variant) {
+                $product->variants()->create([
+                    'color' => $variant['color'],
+                    'price' => $variant['price'],
+                ]);
+            }
+        }
+        return response()->json(['message' => 'Product created successfully', 'product' => $product], 201);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Failed to create product', 'error' => $e->getMessage()], 500);
     }
+}
+
     /**
      * Display the specified resource.
      */
