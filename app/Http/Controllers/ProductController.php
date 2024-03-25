@@ -95,8 +95,9 @@ class ProductController extends Controller
         $user = Auth::user();
         $product = Product::with('image')->find($id);
         if ($product) {
+            return ProductResource::make($product)->withDetail();
             if ($user && $product->user_id == $user->id) {
-                return ProductResource::make($product)->withDetail();
+
             } else {
                 return response()->json(['message' => 'Anda tidak memiliki akses ke produk ini.'], 403);
             }
