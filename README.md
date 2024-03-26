@@ -2,8 +2,7 @@
 
 ## Description
 
-
-This is an api to fetch books
+This is an *api* to fetch products.
 
 ## Base URL
 
@@ -13,7 +12,7 @@ The base URL for all API requests is:
 
 ## Endpoints
 
-### `Post {{api}}/v1/user`
+### `Post {{base_url}}/v1/user`
 
 Create user account.
 
@@ -52,7 +51,7 @@ Create user account.
 
 ## Endpoints
 
-### `Post {{api}}/v1/login`
+### `Post {{base_url}}/v1/login`
 
 Login user account.
 
@@ -93,9 +92,56 @@ Login user account.
 
 ## Endpoints
 
-### `GET {{api}}/v1/products`
+### `Post {{base_url}}/v1/user`
 
-Returns a list of all products .
+Update user account.
+
+### Header
+
+- `Authorization` :  Bearer token
+
+### Request Body
+
+- `username` : String.
+- `email` : String.
+- `password` : String.
+- `Confirmation Password` : String.
+- `photo` : String
+
+### Response
+
+`201 Created` user has been successfully created
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "username": "user",
+  "email": "user@example.com",
+  "password": "rahasia"
+  "photo": "photos/f0GtElrRVKZewsTayq5NtMw1uNp4XDl3pq6sm53S.png"
+}
+
+```
+
+## Errors
+
+`500 Bad Request` the request body is malformed or missing required fields
+
+```json
+{
+  "error": "Missing required field: username"
+}
+```
+
+`500 Internal Server Error`: An unexpected error occurred on the server.
+
+## Endpoints
+
+### `GET {{base_url}}/v1/products`
+
+Returns a list of all products.
 
 ### Header
 
@@ -202,20 +248,6 @@ GET /products
 
 This API uses the following error codes:
 
-- `401 Unauthorized`: The API key provided was invalid or missing.
-
-```json
-{
-    "data": [
-        {
-            "messages": "The provided credentials are incorrect.",
-        },
-       
-    ]
-}
-
-```
-
 - `404 Not Found`: The requested resource was not found.
 
 ```json
@@ -234,7 +266,7 @@ This API uses the following error codes:
 
 ## Endpoints
 
-### `GET {{api}}/v1/product{{id}}`
+### `GET {{base_url}}/v1/product{{id}}`
 
 Returns selected product.
 
@@ -312,7 +344,7 @@ This API uses the following error codes:
 
 ## Endpoints
 
-### `put {{api}}/v1/product/{{id}}`
+### `put {{base_url}}/v1/product/{{id}}`
 
 update product data.
 
@@ -330,6 +362,7 @@ Returns a JSON object with the following properties:
 - `name_category`: String.
 - `name_brand`: String.
 - `price`: Integer.
+- `url` : String
 
 ### Response
 
@@ -399,9 +432,9 @@ Content-Type: application/json
 
 ## Endpoints
 
-### `delete {{api}}/v1/product/{{id}}`
+### `delete {{base_url}}/v1/product/{{id}}`
 
-delete product data .
+delete product data.
 
 ### Header
 
@@ -455,7 +488,7 @@ Content-Type: application/json
 
 ## Endpoints
 
-### `GET {{api}}/v1/product/deleted`
+### `GET {{base_url}}/v1/product/deleted`
 
 Returns deleted product.
 
@@ -530,9 +563,9 @@ This API uses the following error codes:
 
 ## Endpoints
 
-### `delete {{api}}/v1/product/{{id}}/restore`
+### `delete {{base_url}}/v1/product/{{id}}/restore`
 
-Restore product data .
+Restore product data.
 
 ### Header
 
@@ -540,7 +573,7 @@ Restore product data .
 
 ### Response
 
-- `200 Ok`  The product has been successfully restore
+- `200 Ok`  The product has been successfully restore.
 
 ```json
 HTTP/1.1 200 OK
@@ -588,9 +621,9 @@ Content-Type: application/json
 
 ## Endpoints
 
-### `GET {{api}}/v1/brands`
+### `GET {{base_url}}/v1/brands`
 
-Returns a list of all brands .
+Returns a list of all brands.
 
 ### Header
 
@@ -669,7 +702,7 @@ This API uses the following error codes:
 
 ## Endpoints
 
-### `GET {{api}}/v1/brand/{{id}}`
+### `GET {{base_url}}/v1/brand/{{id}}`
 
 Returns selected brand.
 
@@ -738,9 +771,9 @@ This API uses the following error codes:
 
 ## Endpoints
 
-### `put {{api}}/v1/brand/{{id}}`
+### `put {base_url}}/v1/brand/{{id}}`
 
-update brand data .
+update brand data.
 
 ### Header
 
@@ -818,7 +851,7 @@ Content-Type: application/json
 
 ## Endpoints
 
-### `delete {{api}}/v1/brand/{{id}}`
+### `delete {{base_url}}/v1/brand/{{id}}`
 
 delete brand data.
 
@@ -874,7 +907,7 @@ Content-Type: application/json
 
 ## Endpoints
 
-### `GET {{api}}/v1/brands/deleted`
+### `GET {{base_url}}/v1/brands/deleted`
 
 Returns deleted brand.
 
@@ -935,9 +968,9 @@ This API uses the following error codes:
 
 ## Endpoints
 
-### `delete {{api}}/v1/brand/{{id}}/restore`
+### `delete {{base_url}}/v1/brand/{{id}}/restore`
 
-Restore brand data .
+Restore brand data.
 
 ### Header
 
@@ -945,7 +978,7 @@ Restore brand data .
 
 ### Response
 
-- `200 Ok`  The product has been successfully restore
+- `200 Ok`  The product has been successfully restored.
 
 ```json
 HTTP/1.1 200 OK
@@ -993,9 +1026,9 @@ Content-Type: application/json
 
 ## Endpoints
 
-### `GET {{api}}/v1/categories`
+### `GET {{base_url}}/v1/categories`
 
-Returns a list of all categories .
+Returns a list of all categories.
 
 ### Header
 
@@ -1074,7 +1107,7 @@ This API uses the following error codes:
 
 ## Endpoints
 
-### `GET {{api}}/v1/category/{{id}}`
+### `GET {{base_url}}/v1/category/{{id}}`
 
 Returns selected brand.
 
@@ -1143,9 +1176,9 @@ This API uses the following error codes:
 
 ## Endpoints
 
-### `put {{api}}/v1/category/{{id}}`
+### `put {{base_url}}/v1/category/{{id}}`
 
-update brand data .
+update brand data.
 
 ### Header
 
@@ -1223,7 +1256,7 @@ Content-Type: application/json
 
 ## Endpoints
 
-### `delete {{api}}/v1/category/{{id}}`
+### `delete {{base_url}}/v1/category/{{id}}`
 
 delete brand data.
 
@@ -1400,7 +1433,7 @@ Content-Type: application/json
 
 ## Endpoints
 
-### `Post {{api}}/v1/logout`
+### `Post {{base_url}}/v1/logout`
 
 Logout User.
 
