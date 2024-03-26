@@ -17,12 +17,12 @@ class ProductResource extends JsonResource
 {
     $data = [
         'id' => $this->id,
-        'Name' => $this->name,
+        'name' => $this->name,
         'Price' => $this->price,
-        'Brand Name' => $this->brand->Name,
-        'Category Name' => $this->category->Name,
-        'User Id' => $this->user_id,
-        'Shop Name' => $this->user->name,
+        'brand_name' => $this->brand->Name,
+        'category_name' => $this->category->Name,
+        'user_id' => $this->user_id,
+        'user_name' => $this->user->name,
     ];
 
     // Adding conditional for photo
@@ -33,14 +33,20 @@ class ProductResource extends JsonResource
     }
 
     // Adding additional details if isDetail is set to true
+    if ($this->isDetail) {
+        $data['description'] = $this->description;
+        $data['stock'] = $this->stock;
+    }
     if ($this->variants->isNotEmpty()) {
-        $data['Variants'] = $this->variants->map(function ($variant) {
+        $data['variants'] = $this->variants->map(function ($variant) {
             return [
-                'Color' => $variant->color,
-                'Price' => $variant->price,
+                'color' => $variant->color,
+                'price' => $variant->price,
             ];
+
         });
     }
+
 
     return $data;
 }
