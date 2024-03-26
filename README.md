@@ -10,11 +10,11 @@ The base URL for all API requests is:
 
 `[http](http://tugas1.devv/)://Tugas1.dev`
 
-## Endpoints
+## Create user account.
+
+### Endpoints
 
 ### `Post {{base_url}}/v1/user`
-
-Create user account.
 
 ### Request Body
 
@@ -49,11 +49,11 @@ Create user account.
 
 `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Login user account.
+
+### Endpoints
 
 ### `Post {{base_url}}/v1/login`
-
-Login user account.
 
 ### Request Body
 
@@ -90,11 +90,11 @@ Login user account.
 
 `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Update user account.
+
+### Endpoints
 
 ### `Post {{base_url}}/v1/user`
-
-Update user account.
 
 ### Header
 
@@ -138,11 +138,11 @@ Content-Type: application/json
 
 `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Returns a list of all products.
+
+### Endpoints
 
 ### `GET {{base_url}}/v1/products`
-
-Returns a list of all products.
 
 ### Header
 
@@ -265,11 +265,11 @@ This API uses the following error codes:
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Returns selected product.
+
+### Endpoints
 
 ### `GET {{base_url}}/v1/product{{id}}`
-
-Returns selected product.
 
 ### Header
 
@@ -343,11 +343,11 @@ This API uses the following error codes:
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## update product data.
+
+### Endpoints
 
 ### `put {{base_url}}/v1/product/{{id}}`
-
-update product data.
 
 ### Header
 
@@ -431,11 +431,11 @@ Content-Type: application/json
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Delete product data.
+
+### Endpoints
 
 ### `delete {{base_url}}/v1/product/{{id}}`
-
-delete product data.
 
 ### Header
 
@@ -487,11 +487,11 @@ Content-Type: application/json
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Returns deleted product.
+
+### Endpoints
 
 ### `GET {{base_url}}/v1/product/deleted`
-
-Returns deleted product.
 
 ### Header
 
@@ -562,11 +562,11 @@ This API uses the following error codes:
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Restore product data.
+
+### Endpoints
 
 ### `delete {{base_url}}/v1/product/{{id}}/restore`
-
-Restore product data.
 
 ### Header
 
@@ -620,11 +620,11 @@ Content-Type: application/json
 
 ---
 
-## Endpoints
+## Returns a list of all brands.
+
+### Endpoints
 
 ### `GET {{base_url}}/v1/brands`
-
-Returns a list of all brands.
 
 ### Header
 
@@ -701,11 +701,11 @@ This API uses the following error codes:
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Returns selected brand.
+
+### Endpoints
 
 ### `GET {{base_url}}/v1/brand/{{id}}`
-
-Returns selected brand.
 
 ### Header
 
@@ -770,11 +770,11 @@ This API uses the following error codes:
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Update brand data.
+
+### Endpoints
 
 ### `put {base_url}}/v1/brand/{{id}}`
-
-update brand data.
 
 ### Header
 
@@ -850,11 +850,11 @@ Content-Type: application/json
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Delete brand data.
+
+### Endpoints
 
 ### `delete {{base_url}}/v1/brand/{{id}}`
-
-delete brand data.
 
 ### Header
 
@@ -967,11 +967,11 @@ This API uses the following error codes:
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Restore brand data.
+
+### Endpoints
 
 ### `delete {{base_url}}/v1/brand/{{id}}/restore`
-
-Restore brand data.
 
 ### Header
 
@@ -1025,11 +1025,11 @@ Content-Type: application/json
 
 ---
 
-## Endpoints
+## Returns a list of all categories.
+
+### Endpoints
 
 ### `GET {{base_url}}/v1/categories`
-
-Returns a list of all categories.
 
 ### Header
 
@@ -1106,11 +1106,11 @@ This API uses the following error codes:
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Returns selected brand.
+
+### Endpoints
 
 ### `GET {{base_url}}/v1/category/{{id}}`
-
-Returns selected brand.
 
 ### Header
 
@@ -1175,11 +1175,11 @@ This API uses the following error codes:
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Update brand data.
+
+### Endpoints
 
 ### `put {{base_url}}/v1/category/{{id}}`
-
-update brand data.
 
 ### Header
 
@@ -1255,11 +1255,11 @@ Content-Type: application/json
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Delete brand data.
+
+### Endpoints
 
 ### `delete {{base_url}}/v1/category/{{id}}`
-
-delete brand data.
 
 ### Header
 
@@ -1311,11 +1311,11 @@ Content-Type: application/json
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Returns deleted categories.
+
+### Endpoints
 
 ### `GET {{api}}/v1/categories/deleted`
-
-Returns deletedcategories.
 
 ### Header
 
@@ -1372,11 +1372,11 @@ This API uses the following error codes:
 
 - `500 Internal Server Error`: An unexpected error occurred on the server.
 
-## Endpoints
+## Restore category data.
+
+### Endpoints
 
 ### `delete {{api}}/v1/brand/{{id}}/restore`
-
-Restore category data .
 
 ### Header
 
@@ -1432,11 +1432,9 @@ Content-Type: application/json
 
 ## Logout User
 
-## Endpoints
+### Endpoints
 
 ### `Post {{base_url}}/v1/logout`
-
-Logout User.
 
 ### Header
 
