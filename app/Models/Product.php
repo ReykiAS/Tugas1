@@ -36,4 +36,8 @@ class Product extends Model
     {
         return $this->morphOne(Image::class, 'imageable');
     }
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
 }
