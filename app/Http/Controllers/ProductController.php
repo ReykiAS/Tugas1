@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Image;
@@ -112,11 +112,6 @@ class ProductController extends Controller
         $product = Product::with('image')->find($id);
         if ($product) {
             return ProductResource::make($product)->withDetail();
-            if ($user && $product->user_id == $user->id) {
-
-            } else {
-                return response()->json(['message' => 'Anda tidak memiliki akses ke produk ini.'], 403);
-            }
         } else {
             return response()->json(['message' => 'Produk tidak ditemukan'], 404);
         }
@@ -125,30 +120,51 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(ProductUpdateRequest $request, $id): JsonResponse
-    {
-        $validated = $request->validated();
-        $product = Product::find($id);
+{
+    $validated = $request->validated();
+    $product = Product::find($id);
 
-        if (!$product) {
-            return response()->json(['message' => 'Product tidak ditemukan'], 404);
-        }
-        if ($product->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Anda tidak memiliki izin untuk memperbarui produk ini'], 403);
-        }
-        $product->update($validated);
-        $product->updateImage($request);
-
-        return response()->json(['message' => 'Produk berhasil diupdate', 'produk' => $product]);
+    if (!$product) {
+        return response()->json(['message' => 'Product tidak ditemukan'], 404);
     }
+    if ($product->user_id !== auth()->id()) {
+        return response()->json(['message' => 'Anda tidak memiliki izin untuk memperbarui produk ini'], 403);
+    }
+
+    // Update product details
+    $product->update($validated);
+    $product->updateImage($request);
+
+    // Update variants if available
+    if ($request->has('variants')) {
+        foreach ($request->variants as $variantData) {
+            if (isset($variantData['id'])) {
+                $variant = ProductVariant::find($variantData['id']);
+
+                if ($variant && $variant->product_id === $product->id) {
+                    $variant->update([
+                        'color' => $variantData['color'],
+                        'price' => $variantData['price'],
+                    ]);
+                }
+            } else {
+                $product->variants()->create([
+                    'color' => $variantData['color'],
+                    'price' => $variantData['price'],
+                ]);
+            }
+        }
+    }
+
+    return response()->json(['message' => 'Produk berhasil diupdate', 'produk' => $product]);
+}
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
     $product = Product::findOrFail($id);
-    if (auth()->user()->id != $product->user_id) {
-        return response()->json(['message' => 'Anda tidak memiliki izin untuk memperbarui produk ini.'], 403);
-    }
     $product->delete();
     return response()->json(['message' => 'Product deleted successfully']);
     }
@@ -164,10 +180,6 @@ class ProductController extends Controller
     public function restore($id)
     {
         $product = Product::withTrashed()->findOrFail($id);
-
-        if (auth()->user()->id != $product->user_id) {
-            return response()->json(['message' => 'Anda tidak memiliki izin untuk memulihkan produk ini.'], 403);
-        }
 
         $product->restore();
 

@@ -33,9 +33,13 @@ class ProductResource extends JsonResource
     }
 
     // Adding additional details if isDetail is set to true
-    if ($this->isDetail) {
-        $data['Description'] = $this->description;
-        $data['Stock'] = $this->stock;
+    if ($this->variants->isNotEmpty()) {
+        $data['Variants'] = $this->variants->map(function ($variant) {
+            return [
+                'Color' => $variant->color,
+                'Price' => $variant->price,
+            ];
+        });
     }
 
     return $data;
