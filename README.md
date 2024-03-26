@@ -2,7 +2,8 @@
 
 ## Description
 
-This is an api to fetch data
+
+This is an api to fetch books
 
 ## Base URL
 
